@@ -66,7 +66,7 @@ async def get_entry(request: Request, entry_id: str, entry_service: EntryService
         raise HTTPException(status_code=404,detail="Entry not found")
     
     return result
-    raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
+    # raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
 
 @router.patch("/entries/{entry_id}") #装饰器，当访问该地址使用该函数
 async def update_entry(entry_id: str, entry_update: dict, entry_service: EntryService = Depends(get_entry_service)):
@@ -93,7 +93,14 @@ async def delete_entry(entry_id: str, entry_service: EntryService = Depends(get_
     
     Hint: Look at how the update_entry endpoint checks for existence
     """
-    raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
+
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Entry not found")
+    await entry_service.delete_entry(entry_id)
+    return {"detail":f"{entry_id} delete successfully"}
+
+    # raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
 
 @router.delete("/entries")
 async def delete_all_entries(entry_service: EntryService = Depends(get_entry_service)):
