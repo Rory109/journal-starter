@@ -4,7 +4,9 @@ from fastapi import APIRouter, HTTPException, Request, Depends
 from repositories.postgres_repository import PostgresDB
 from services.entry_service import EntryService
 from models.entry import Entry, EntryCreate
+import logging
 
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -46,6 +48,7 @@ async def create_entry(entry_data: EntryCreate, entry_service: EntryService = De
 async def get_all_entries(entry_service: EntryService = Depends(get_entry_service)):
     """Get all journal entries."""
     result = await entry_service.get_all_entries()
+    logger.info("get all entity")
     return {"entries": result, "count": len(result)}
 
 @router.get("/entries/{entry_id}")
