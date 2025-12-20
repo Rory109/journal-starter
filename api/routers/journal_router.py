@@ -60,6 +60,10 @@ async def get_entry(request: Request, entry_id: str, entry_service: EntryService
     
     Hint: Check the update_entry endpoint for similar patterns
     """
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Entry not found")
+    return result
     raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
 
 @router.patch("/entries/{entry_id}")
@@ -87,6 +91,14 @@ async def delete_entry(entry_id: str, entry_service: EntryService = Depends(get_
     
     Hint: Look at how the update_entry endpoint checks for existence
     """
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+    
+        raise HTTPException(status_code=404, detail="Entry not found")
+    else:
+        await entry_service.delete_entry(entry_id)
+        return {"detail":f"entries {entry_id} is deleted"}
+
     raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
 
 @router.delete("/entries")
