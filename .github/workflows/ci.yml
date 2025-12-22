@@ -1,0 +1,31 @@
+name: Journal API CI
+
+# 触发条件：push 到 main 分支或发起pull request
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build and test: 
+    # 运行环境-Gituhub上最新的ubuntu虚拟机
+    runs-on: ubuntu-latest
+
+    steps:
+    # 拉取代码
+    - name: Checkout code
+    - uses: actions/checkout@v3
+
+    # 安装python
+    - name: Set up Python 3.10
+    - uses: actions/setup-python@v4
+
+    # 安装依赖
+    - name: Install dependencies
+    run : |
+      python -m pip install --upgrade pip
+      if [ -f api/requirements.txt ]; then pip install -r api/requirements.txt; fi
+
+    - name: test
+      run: echo "Hello World"
