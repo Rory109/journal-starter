@@ -8,7 +8,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build and test: 
+  build-and-test: 
     # 运行环境-Gituhub上最新的ubuntu虚拟机
     runs-on: ubuntu-latest
 
