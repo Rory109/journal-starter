@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    # 1.从dockerhub中拉取镜像
+    image: rory109/journal-api:latest
+    container_name: journal-app
+    ports:
+      - "8000:8000"
+    
+    # 环境变量
+    env_file:
+      - .env
+    # 重启策略
+    restart: always

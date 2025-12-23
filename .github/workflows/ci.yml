@@ -9,7 +9,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build-and-test: 
+  build-and-push: 
     # 运行环境-Gituhub上最新的ubuntu虚拟机
     runs-on: ubuntu-latest
 
@@ -28,10 +28,34 @@ jobs:
       # 设置docker buildx
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v2
-
+      # 在context目录下找到dockerfile并在github的虚拟机上进行加载和构建，最后上传到tags处
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/journal-api:latest
+
+    # 部署到Azure
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          key: ${{secrets.SSH_KEY}}
+          script_stop: true
+          # 登录上去后要敲的命令
+          script: |
+            cd ~/journal-starter
+            # 拉取最新代码
+            git pull origin main
+            # 拉取最新镜像
+            docker compose pull
+            # 用新镜像重启容器
+            docker compose up -d
+            # 清理旧镜像（节省空间）
+            docker image prune -f
