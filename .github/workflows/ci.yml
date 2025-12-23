@@ -44,8 +44,8 @@ jobs:
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USERNAME}}
+          host: 20.39.203.102
+          username: azureuser
           key: ${{secrets.SSH_KEY}}
           script_stop: true
           # 登录上去后要敲的命令
