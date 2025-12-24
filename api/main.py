@@ -25,6 +25,13 @@ logger.info("journal api system initializing...")
 app = FastAPI(title="Journal API", description="A simple journal API for tracking daily work, struggles, and intentions")
 app.include_router(journal_router)
 
+@app.on_event("startup")
+async def startup_db_client():
+    logger.info("Checking database tables...")
+    async with PostgresDB() as db:
+        await db.initialize_tables()
+    logger.info("Database initialized successfully.")
+
 @router.get("/")
 async def get_all_entries():
     return {"message":"hello from CI/CD Pipeline!"}

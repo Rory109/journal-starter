@@ -141,7 +141,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 resource "random_password" "db_password" {
   length           = 16
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  override_special = "_-!~"
 }
 
 resource "random_string" "naming_suffix" {

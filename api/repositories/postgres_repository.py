@@ -26,6 +26,20 @@ class PostgresDB(DatabaseInterface):
         self.pool = await asyncpg.create_pool(DATABASE_URL)
         return self
 
+    async def initialize_tables(self):
+        async with self.pool.acquire() as conn:
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS public.entries (
+                    id VARCHAR PRIMARY KEY,
+                    data JSONB NOT NULL,
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_entries_created_at ON public.entries(created_at);
+                CREATE INDEX IF NOT EXISTS idx_entries_data_gin ON public.entries USING GIN (data);
+            """)
+
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self.pool.close()
 
