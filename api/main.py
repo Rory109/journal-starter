@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter
 from dotenv import load_dotenv
 from routers.journal_router import router as journal_router
 import logging
-
+from repositories.postgres_repository import PostgresDB
 
 load_dotenv()
 router = APIRouter()
