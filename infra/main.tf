@@ -104,11 +104,12 @@ resource "tls_private_key" "example_ssh" {
 
 # 8. 虚拟机 (Spot Instance - 极致省钱配置!)
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "journal-vm-spot"
+  name                = "journal-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_B1s" # 最便宜的规格
   admin_username      = "azureuser"
+  custom_data         = filebase64("custom_data.tpl")
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
