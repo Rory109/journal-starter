@@ -1,0 +1,12 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+- role: worker
+- role: worker
+- role: worker
+# 既然配置了宿主机代理，建议直接通过代理访问官方源，
+# 移除可能不稳定的国内镜像源配置，避免冲突。
+# Kind 会自动检测并注入你命令行里的 http_proxy 环境变量到这些节点中。
+networking:
+  disableDefaultCNI: false

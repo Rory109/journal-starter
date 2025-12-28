@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: journal-app
+  namespace: dev
+spec:
+  replicas: 2  # 我们这次试着起 2 个副本！
+  selector:
+    matchLabels:
+      app: journal-api
+  template:
+    metadata:
+      labels:
+        app: journal-api
+    spec:
+      containers:
+      - name: journal-container
+        # ⚠️ 确保用你之前推送到 Docker Hub 的镜像
+        image: rory109/journal-api:latest
+        # 策略：Always (总是去拉最新的) 或 IfNotPresent (本地有就用本地的)
+        imagePullPolicy: IfNotPresent 
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: FULL_DB_URL
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: journal-app
+  namespace: dev
+spec:
+  type: ClusterIP
+  selector:
+    app: journal-api
+  ports:
+  - port: 80
+    targetPort: 8000

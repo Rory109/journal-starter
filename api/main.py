@@ -4,7 +4,7 @@ from routers.journal_router import router as journal_router
 import logging
 from repositories.postgres_repository import PostgresDB
 
-load_dotenv()
+load_/Users/rory/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_lk65og2jelrs22_1946/temp/RWTemp/2025-12/2a399d665566c6fba17ffd6d8ca0fb59.pngdotenv()
 router = APIRouter()
 
 # TODO: Setup basic console logging

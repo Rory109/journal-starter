@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+# 元数据：deployment的数据
+metadata:
+  name: postgres
+  namespace: dev
+# 核心指挥内容
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres  # 选择器：让k8s管理所有带app:postgres标签的Pod
+  # pod生成模板
+  template:
+    metadata:
+      labels:
+        app: postgres # 给pod打标签（要和seletor相同才能被管理）
+    # pod规格说明
+    spec:
+      containers: # 容器列表
+      - name: postgres
+        image: postgres:15
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        envFrom: # 环境变量注入
+        - secretRef:
+            name: postgres-secret
+        # 2. 挂载初始化脚本 (对应 docker-compose 的 volumes)
+        volumeMounts:
+        # 挂载点：容器内的某种路径
+        - mountPath: /docker-entrypoint-initdb.d/
+          name: init-script-volume
+      # 3. 定义卷的来源 (我们用 ConfigMap 冒充卷)
+      volumes:
+      - name: init-script-volume
+        configMap:
+          name: postgres-init
+
+---
+# 分隔符：下面定义 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: dev
+spec:
+  selector:
+    # 流量转发给拥有标签 app: postgres 的 Pod
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+---
+# 数据库初始化脚本 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: dev
+data:
+  init.sql: |
+    -- Journal API Database Setup
+    -- Creates the entries table
+    CREATE TABLE IF NOT EXISTS entries (
+        id VARCHAR PRIMARY KEY,
+        data JSONB NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+    );
+
+    -- Creates an index on created_at for faster queries
+    CREATE INDEX IF NOT EXISTS idx_entries_created_at ON entries(created_at);
+
+    -- Creates an index on the JSON data for faster searches
+    CREATE INDEX IF NOT EXISTS idx_entries_data_gin ON entries USING GIN (data);
