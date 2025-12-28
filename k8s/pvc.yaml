@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc-dev
+  namespace: dev
+spec:
+  accessModes:
+    - ReadWriteOnce # 这块硬盘只能被一个节点读写（数据库常用配置）
+  resources:
+    requests:
+      storage: 1Gi # 请求 1G 空间

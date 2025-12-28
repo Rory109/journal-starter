@@ -37,34 +37,34 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/journal-api:latest
 
     # 部署到Azure
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Azure VM
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USER}}
-          key: ${{secrets.SSH_KEY}}
-          envs: DATABASE_URL
-          script_stop: true
-          # 登录上去后要敲的命令
-          script: |
-            if [ ! -d "journal-starter" ];then
-              git clone https://github.com/Rory109/journal-starter.git
-            fi
-            cd journal-starter
-            # 拉取最新代码
-            git pull origin main
-            if [ ! -f .env ];then
-              echo "DATABASE_URL=$DATABASE_URL" > .env 
-            fi
-            # 拉取最新镜像
-            docker compose pull
-            # 用新镜像重启容器
-            docker compose up -d
-            # 清理旧镜像（节省空间）
-            docker image prune -f
-        env:
-          DATABASE_URL: ${{secrets.DATABASE_URL}}
+  # deploy:
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to Azure VM
+  #       uses: appleboy/ssh-action@v1.0.0
+  #       with:
+  #         host: ${{secrets.SSH_HOST}}
+  #         username: ${{secrets.SSH_USER}}
+  #         key: ${{secrets.SSH_KEY}}
+  #         envs: DATABASE_URL
+  #         script_stop: true
+  #         # 登录上去后要敲的命令
+  #         script: |
+  #           if [ ! -d "journal-starter" ];then
+  #             git clone https://github.com/Rory109/journal-starter.git
+  #           fi
+  #           cd journal-starter
+  #           # 拉取最新代码
+  #           git pull origin main
+  #           if [ ! -f .env ];then
+  #             echo "DATABASE_URL=$DATABASE_URL" > .env 
+  #           fi
+  #           # 拉取最新镜像
+  #           docker compose pull
+  #           # 用新镜像重启容器
+  #           docker compose up -d
+  #           # 清理旧镜像（节省空间）
+  #           docker image prune -f
+  #       env:
+  #         DATABASE_URL: ${{secrets.DATABASE_URL}}

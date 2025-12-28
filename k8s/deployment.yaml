@@ -27,6 +27,21 @@ spec:
             secretKeyRef:
               name: app-secret
               key: FULL_DB_URL
+        # 存活探针-死机重启
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10 # 刚启动时10s后再开始探测
+          periodSeconds: 10 # 每10s探测一次
+        # 就绪探针： 没准备好不发流量
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5 # 刚启动时5s后再开始探测
+          periodSeconds: 5 # 每5s探测一次
+        
 
 ---
 apiVersion: v1

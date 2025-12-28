@@ -30,12 +30,17 @@ spec:
         volumeMounts:
         # 挂载点：容器内的某种路径
         - mountPath: /docker-entrypoint-initdb.d/
-          name: init-script-volume
-      # 3. 定义卷的来源 (我们用 ConfigMap 冒充卷)
+          name: init-script-volume # 引用下面的定义的volumes名
+        - mountPath: /var/lib/postgresql/data # /  数据库默认存放位置，挂载后k8s把PVC插到容器路径下，写进数据中的文件会放在外面的PVC中
+          name: postgres-data-volume
+      # 3. 定义卷的来源
       volumes:
       - name: init-script-volume
         configMap:
           name: postgres-init
+      - name: postgres-data-volume
+        persistentVolumeClaim:
+          claimName: postgres-pvc-dev
 
 ---
 # 分隔符：下面定义 Service
@@ -51,6 +56,8 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
+
+
 
 ---
 # 数据库初始化脚本 ConfigMap

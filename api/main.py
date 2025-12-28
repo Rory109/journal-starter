@@ -4,7 +4,7 @@ from routers.journal_router import router as journal_router
 import logging
 from repositories.postgres_repository import PostgresDB
 
-load_/Users/rory/Library/Containers/com.tencent.xinWeChat/Data/Documents/xwechat_files/wxid_lk65og2jelrs22_1946/temp/RWTemp/2025-12/2a399d665566c6fba17ffd6d8ca0fb59.pngdotenv()
+load_dotenv()
 router = APIRouter()
 
 # TODO: Setup basic console logging
@@ -32,8 +32,12 @@ async def startup_db_client():
         await db.initialize_tables()
     logger.info("Database initialized successfully.")
 
-@router.get("/")
+@app.get("/")
 async def get_all_entries():
     return {"message":"hello from CI/CD Pipeline!"}
+
+@app.get("/health")
+async def get_all_entries():
+    return {"message":"everything is fine!"}
 
     
