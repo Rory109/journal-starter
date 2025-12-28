@@ -37,7 +37,8 @@ async def get_all_entries():
     return {"message":"hello from CI/CD Pipeline!"}
 
 @app.get("/health")
-async def get_all_entries():
-    return {"message":"everything is fine!"}
+async def health_check():
+    return {"status": "ok"}
+
 
     
